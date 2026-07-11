@@ -1,0 +1,51 @@
+# PR-time checks, one job per language SDK. Runs on every PR against main
+# and every push to main.
+#
+# Jobs are intentionally NOT path-filtered: branch protection requires the
+# per-language checks, and a required check that never runs (because a PR
+# didn't touch that language) would block the PR forever. The SDKs are
+# small, so always running every job is cheaper than the alternative.
+# When a new language is added, add a sibling job here and require it.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  node:
+    name: Node
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: node
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: node/package-lock.json
+
+      - run: npm ci
+
+      - run: npm run typecheck
+
+      - run: npm run build
+
+      # Sanity check that the package would actually pass `npm publish` —
+      # catches missing `files`, broken exports, etc. before a real
+      # release ever runs.
+      - name: Publish dry-run
+        run: npm publish --dry-run --access public
