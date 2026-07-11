@@ -1,0 +1,3 @@
+# Normalise line endings so CI shell scripts and YAML never get CRLF,
+# regardless of a contributor's core.autocrlf setting.
+* text=auto eol=lf

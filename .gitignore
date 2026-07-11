@@ -1,0 +1,22 @@
+# Node / JS
+node_modules/
+dist/
+*.tsbuildinfo
+
+# Python (future SDKs)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist-python/
+
+# Go (future SDKs)
+/go/bin/
+
+# General
+.env
+.env.*
+!.env.example
+.DS_Store
