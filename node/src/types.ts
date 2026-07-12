@@ -11,6 +11,12 @@ export interface AutherConfig {
      * Only set this if you have a custom deployment.
      */
     endpoint?: string;
+    /**
+     * Max milliseconds to wait for a token verification request before giving
+     * up. Prevents a slow or hung Auther backend from stalling your request.
+     * Defaults to 5000 (5s). On timeout, verification fails with status 504.
+     */
+    timeoutMs?: number;
 }
 
 export interface AutherUser {

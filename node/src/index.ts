@@ -45,6 +45,7 @@ export class Auther {
             clientId:     config.clientId,
             clientSecret: config.clientSecret,
             endpoint:     config.endpoint ?? (isDev ? 'http://localhost:4000' : 'https://oautherbackend.ziloris.com'),
+            timeoutMs:    config.timeoutMs ?? 5000,
         };
     }
 
@@ -70,6 +71,7 @@ export class Auther {
             this.config.clientId,
             this.config.clientSecret,
             token,
+            this.config.timeoutMs,
         );
     }
 }
