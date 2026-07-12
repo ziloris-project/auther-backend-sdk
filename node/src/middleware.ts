@@ -12,8 +12,8 @@ import { AutherConfig } from './types';
  * On success  → attaches req.autherUser and calls next()
  * On failure  → responds 401 / 403 JSON, does NOT call next()
  */
-export function createProtect(config: AutherConfig): RequestHandler {
-    const endpoint = config.endpoint ?? 'https://oautherbackend.ziloris.com';
+export function createProtect(config: Required<AutherConfig>): RequestHandler {
+    const endpoint = config.endpoint;
 
     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         // ── 1. Extract token ───────────────────────────────────────────────────
