@@ -51,11 +51,9 @@ auther-backend-sdk/
 
 ## Releasing
 
-Releases are published from CI, never from a developer machine. See
-[RELEASING.md](./RELEASING.md) for details. In short, for Node: bump the `version` in
-[`node/package.json`](./node/package.json) in your PR, and merging to `main` publishes it
-with [sigstore provenance](https://docs.npmjs.com/generating-provenance-statements) if
-that version is not already on npm.
+Published from CI. For Node, bump the `version` in
+[`node/package.json`](./node/package.json) and merge to `main`. See
+[RELEASING.md](./RELEASING.md).
 
 ## License
 
