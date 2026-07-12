@@ -11,7 +11,7 @@ export type { AutherConfig, AutherUser, VerifyResult };
  * Install:  npm install @auther-sdk/node
  *
  * @example
- * import { Auther } from 'auther-node';
+ * import { Auther } from '@auther-sdk/node';
  * import express from 'express';
  * import cookieParser from 'cookie-parser';
  *
