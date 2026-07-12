@@ -1,4 +1,5 @@
-# Release the Node SDK to npm.
+# Release the Node SDK to npm via OIDC Trusted Publishing — no token
+# (npm classic tokens were revoked in Dec 2025).
 #
 # Model (single package per language, so no changesets): the version in
 # node/package.json is the source of truth. On every push to main that
@@ -9,10 +10,13 @@
 # merge that doesn't change the version republishes nothing (npm view
 # finds it and the step skips). No `npm publish` ever runs from a laptop.
 #
-# Required secrets:
-#   - NPM_TOKEN — automation token with publish access to @auther-sdk.
-#
-# Required permissions: id-token write (provenance), contents read.
+# Auth: npm OIDC Trusted Publishing. NO secret token. @auther-sdk/node
+# must have a Trusted Publisher configured on npmjs.com pointing at:
+#   org/user:  ziloris-project
+#   repo:      auther-backend-sdk
+#   workflow:  release.yml
+# Requires npm >= 11.5.1 and Node >= 22.14 (both ensured below) and the
+# id-token: write permission.
 
 name: Release (node)
 
@@ -20,6 +24,7 @@ on:
   push:
     branches: [main]
     paths: ['node/**']
+  workflow_dispatch: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -32,10 +37,6 @@ jobs:
   publish-node:
     name: Publish @auther-sdk/node
     runs-on: ubuntu-latest
-    # Referencing the secret in a job-level env lets the publish step gate
-    # on its presence — you can't read `secrets` directly in a step `if`.
-    env:
-      HAS_NPM_TOKEN: ${{ secrets.NPM_TOKEN != '' }}
     defaults:
       run:
         working-directory: node
@@ -49,9 +50,7 @@ jobs:
           cache: 'npm'
           cache-dependency-path: node/package-lock.json
 
-      # npm 11.5.1+ routes the publish through the GitHub OIDC trusted
-      # publisher when one is configured on npmjs.com; otherwise NPM_TOKEN
-      # authorises the write. Either way provenance is attached.
+      # OIDC Trusted Publishing needs npm >= 11.5.1; Node 22 ships npm 10.
       - name: Upgrade npm to OIDC-capable version
         run: npm install -g npm@latest
 
@@ -63,18 +62,13 @@ jobs:
 
       - name: Publish if version is new
         run: |
-          if [[ "$HAS_NPM_TOKEN" != "true" ]]; then
-            echo "::notice::NPM_TOKEN secret is not set — publish skipped. Add it in Settings ▸ Secrets and variables ▸ Actions to enable releases."
-            exit 0
-          fi
           NAME=$(node -p "require('./package.json').name")
           VERSION=$(node -p "require('./package.json').version")
           if npm view "$NAME@$VERSION" version >/dev/null 2>&1; then
             echo "ℹ️  $NAME@$VERSION already on npm — nothing to publish."
           else
-            echo "📦 Publishing $NAME@$VERSION"
+            echo "📦 Publishing $NAME@$VERSION via OIDC trusted publishing"
             npm publish --provenance --access public
           fi
         env:
-          NODE_AUTH_TOKEN:       ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: 'true'
