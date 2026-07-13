@@ -6,9 +6,9 @@ export interface AutherConfig {
     /** Your project's Client Secret — found in Auther dashboard → API Keys. */
     clientSecret: string;
     /**
-     * Override the Auther backend URL.
-     * Auto-detected: localhost:4000 when NODE_ENV=development, production otherwise.
-     * Only set this if you have a custom deployment.
+     * Override the Auther backend URL. Defaults to the Auther production API.
+     * Set this to point at a local or self-hosted backend, for example
+     * 'http://localhost:4000' during development.
      */
     endpoint?: string;
     /**

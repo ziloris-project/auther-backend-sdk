@@ -19,7 +19,8 @@ export type { AutherConfig, AutherUser, VerifyResult };
  * const auther = new Auther({
  *   clientId:     'req_live_...',
  *   clientSecret: 'sk_live_...',
- *   // endpoint auto-resolves: localhost:4000 in development, production otherwise
+ *   // endpoint defaults to the Auther production API; set it to point at a
+ *   // local backend during development
  * });
  *
  * app.use(cookieParser());
@@ -40,11 +41,13 @@ export class Auther {
         if (!config.clientId)     throw new Error('[auther-node] clientId is required');
         if (!config.clientSecret) throw new Error('[auther-node] clientSecret is required');
 
-        const isDev = process.env.DEV_ENV === 'development';
         this.config = {
             clientId:     config.clientId,
             clientSecret: config.clientSecret,
-            endpoint:     config.endpoint ?? (isDev ? 'http://localhost:4000' : 'https://oautherbackend.ziloris.com'),
+            // Always the production API unless the caller overrides it. We do
+            // not auto-switch on NODE_ENV, since a consumer's dev build must
+            // not silently point at a localhost Auther that is not theirs.
+            endpoint:     config.endpoint ?? 'https://oautherbackend.ziloris.com',
             timeoutMs:    config.timeoutMs ?? 5000,
         };
     }
