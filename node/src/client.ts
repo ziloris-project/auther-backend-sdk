@@ -15,11 +15,14 @@ export function callVerify(
     clientId:     string,
     clientSecret: string,
     token:        string,
+    timeoutMs     = 5000,
 ): Promise<VerifyResult> {
     return new Promise((resolve) => {
         const body   = JSON.stringify({ token });
         const url    = new URL('/api/v1/auth/verify', endpoint);
         const driver = url.protocol === 'http:' ? http : https;
+        let settled  = false;
+        const finish = (r: VerifyResult) => { if (!settled) { settled = true; resolve(r); } };
 
         const req = driver.request(
             {
@@ -41,23 +44,31 @@ export function callVerify(
                     try {
                         const json = JSON.parse(raw);
                         if (res.statusCode === 200 && json?.data?.user) {
-                            resolve({ ok: true, user: json.data.user as AutherUser });
+                            finish({ ok: true, user: json.data.user as AutherUser });
                         } else {
-                            resolve({
+                            finish({
                                 ok:      false,
                                 status:  res.statusCode ?? 500,
                                 message: json?.message ?? 'Token verification failed',
                             });
                         }
                     } catch {
-                        resolve({ ok: false, status: 500, message: 'Unexpected response from Auther backend' });
+                        finish({ ok: false, status: 500, message: 'Unexpected response from Auther backend' });
                     }
                 });
             },
         );
 
+        // Fail fast instead of hanging the caller's request if the backend
+        // stalls. destroy() fires the 'error' handler below with ECONNRESET,
+        // but `settled` makes the timeout result win.
+        req.setTimeout(timeoutMs, () => {
+            finish({ ok: false, status: 504, message: `Auther backend timed out after ${timeoutMs}ms` });
+            req.destroy();
+        });
+
         req.on('error', (err) => {
-            resolve({ ok: false, status: 503, message: `Auther backend unreachable: ${err.message}` });
+            finish({ ok: false, status: 503, message: `Auther backend unreachable: ${err.message}` });
         });
 
         req.write(body);

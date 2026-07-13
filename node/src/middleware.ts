@@ -32,7 +32,7 @@ export function createProtect(config: Required<AutherConfig>): RequestHandler {
         }
 
         // ── 2. Verify with Auther backend ──────────────────────────────────────
-        const result = await callVerify(endpoint, config.clientId, config.clientSecret, token);
+        const result = await callVerify(endpoint, config.clientId, config.clientSecret, token, config.timeoutMs);
 
         if (!result.ok) {
             res.status(result.status).json({ success: false, message: result.message });
