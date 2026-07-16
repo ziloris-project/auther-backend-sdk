@@ -1,6 +1,6 @@
 {
   "name": "@auther-sdk/node",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Official Node.js middleware for Auther — verify end-user tokens in any Express/Node app.",
   "license": "Apache-2.0",
   "homepage": "https://github.com/ziloris-project/auther-backend-sdk/tree/main/node#readme",
@@ -16,25 +16,38 @@
     "name": "Ziloris",
     "url": "https://ziloris.com"
   },
-  "main":   "./dist/index.js",
+  "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "types":  "./dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types":   "./dist/index.d.ts",
-      "import":  "./dist/index.mjs",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.js"
     }
   },
-  "files": ["dist", "README.md", "LICENSE"],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
-    "build":     "tsup src/index.ts --format cjs,esm --dts --clean",
-    "dev":       "tsup src/index.ts --format cjs,esm --dts --watch",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "typecheck": "tsc --noEmit",
-    "clean":     "rm -rf dist"
+    "clean": "rm -rf dist"
   },
-  "engines": { "node": ">=18.0.0" },
-  "keywords": ["auther", "auth", "middleware", "express", "jwt", "node"],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "auther",
+    "auth",
+    "middleware",
+    "express",
+    "jwt",
+    "node"
+  ],
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -43,12 +56,14 @@
     "express": ">=4.0.0"
   },
   "peerDependenciesMeta": {
-    "express": { "optional": true }
+    "express": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
-    "@types/node":    "^25.0.3",
-    "tsup":           "^8.5.1",
-    "typescript":     "^5.9.3"
+    "@types/node": "^25.0.3",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
   }
 }
