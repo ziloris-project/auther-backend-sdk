@@ -23,6 +23,8 @@ export interface AutherUser {
     /** End-user UUID */
     id:            string;
     email:         string;
+    /** Display name, from signup or the OAuth provider. Null when never given. */
+    name:          string | null;
     emailVerified: boolean;
     createdAt:     string;
     /** Auther project UUID this user belongs to */

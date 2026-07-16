@@ -1,7 +1,7 @@
 {
   "name": "@auther-sdk/node",
-  "version": "1.1.0",
-  "description": "Official Node.js middleware for Auther — verify end-user tokens in any Express/Node app.",
+  "version": "1.2.0",
+  "description": "Official Node.js middleware for Auther \u2014 verify end-user tokens in any Express/Node app.",
   "license": "Apache-2.0",
   "homepage": "https://github.com/ziloris-project/auther-backend-sdk/tree/main/node#readme",
   "bugs": {
